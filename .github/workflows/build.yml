@@ -19,7 +19,7 @@ jobs:
           java -jar BuildTools.jar --rev 1.16.5
           cd Bukkit
           mvn install
-          cd ../CraftBukki
+          cd ../CraftBukkit
           mvn install
           cd ../../
       - name: Build with Gradle
