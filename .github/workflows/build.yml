@@ -16,7 +16,7 @@ jobs:
           mkdir spigot
           cd spigot
           wget https://hub.spigotmc.org/jenkins/job/BuildTools/lastSuccessfulBuild/artifact/target/BuildTools.jar
-          java -jar BuildTools.jar --rev 1.6.5
+          java -jar BuildTools.jar --rev 1.16.5
           cd Bukkit
           mvn install
           cd ../CraftBukki
