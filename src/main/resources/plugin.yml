@@ -1,0 +1,4 @@
+name: ExcavatorTools
+main: net.aruneko.excavatortools.ExcavatorTools
+version: 1.0.0
+api-version: 1.16
