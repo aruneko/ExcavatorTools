@@ -1,6 +1,7 @@
 package net.aruneko.excavatortools.listeners
 
 import net.aruneko.excavatortools.extensions.canBreakWith
+import net.aruneko.excavatortools.extensions.canBreakWithShovel
 import net.aruneko.excavatortools.extensions.surroundingBlocks
 import net.aruneko.excavatortools.recipes.Excavator.Companion.isExcavator
 import org.bukkit.Server
@@ -24,7 +25,7 @@ class ExcavatorListener(private val plugin: Plugin, private val server: Server):
         }
 
         event.block.surroundingBlocks(player).filter {
-            it.canBreakWith(mainHandItem)
+            it.canBreakWithShovel()
         }.forEach {
             it.breakNaturally(mainHandItem)
         }
