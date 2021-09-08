@@ -12,17 +12,6 @@ jobs:
         with:
           distribution: temurin
           java-version: 16
-      - name: build spigot
-        run: |
-          mkdir spigot
-          cd spigot
-          wget https://hub.spigotmc.org/jenkins/job/BuildTools/lastSuccessfulBuild/artifact/target/BuildTools.jar
-          java -jar BuildTools.jar --rev 1.17.1
-          cd Bukkit
-          mvn install
-          cd ../CraftBukkit
-          mvn install
-          cd ../../
       - name: Build with Gradle
         run: |
           chmod +x ./gradlew
