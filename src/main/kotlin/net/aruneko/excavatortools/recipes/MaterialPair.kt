@@ -9,6 +9,7 @@ import org.bukkit.inventory.ItemFlag
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.ShapedRecipe
 import org.bukkit.plugin.Plugin
+import java.util.*
 
 data class MaterialPair(val materialName: String, val tool: Material, val material: Material)
 
@@ -19,7 +20,7 @@ fun List<MaterialPair>.addRecipes(itemName: String, plugin: Plugin, server: Serv
         meta?.setDisplayName("${ChatColor.GREEN}${it.materialName} $itemName")
         meta?.addEnchant(Enchantment.DURABILITY, 1, true)
         meta?.addItemFlags(ItemFlag.HIDE_ENCHANTS)
-        meta?.lore = listOf("${itemName.toUpperCase()}!")
+        meta?.lore = listOf("${itemName.uppercase(Locale.getDefault())}!")
         item.itemMeta = meta
 
         val key = NamespacedKey(plugin, "${it.material.name}.$itemName")

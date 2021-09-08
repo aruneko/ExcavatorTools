@@ -8,12 +8,14 @@ import org.bukkit.plugin.Plugin
 class Excavator {
     companion object {
         private val shovels = listOf(
-            MaterialPair("Wooden", Material.WOODEN_SHOVEL, Material.OAK_WOOD),
-            MaterialPair("Wooden", Material.WOODEN_SHOVEL, Material.ACACIA_WOOD),
-            MaterialPair("Wooden", Material.WOODEN_SHOVEL, Material.BIRCH_WOOD),
-            MaterialPair("Wooden", Material.WOODEN_SHOVEL, Material.DARK_OAK_WOOD),
-            MaterialPair("Wooden", Material.WOODEN_SHOVEL, Material.JUNGLE_WOOD),
-            MaterialPair("Wooden", Material.WOODEN_SHOVEL, Material.SPRUCE_WOOD),
+            MaterialPair("Wooden", Material.WOODEN_SHOVEL, Material.OAK_PLANKS),
+            MaterialPair("Wooden", Material.WOODEN_SHOVEL, Material.ACACIA_PLANKS),
+            MaterialPair("Wooden", Material.WOODEN_SHOVEL, Material.BIRCH_PLANKS),
+            MaterialPair("Wooden", Material.WOODEN_SHOVEL, Material.DARK_OAK_PLANKS),
+            MaterialPair("Wooden", Material.WOODEN_SHOVEL, Material.JUNGLE_PLANKS),
+            MaterialPair("Wooden", Material.WOODEN_SHOVEL, Material.SPRUCE_PLANKS),
+            MaterialPair("Wooden", Material.WOODEN_SHOVEL, Material.CRIMSON_PLANKS),
+            MaterialPair("Wooden", Material.WOODEN_SHOVEL, Material.WARPED_PLANKS),
             MaterialPair("Stone", Material.STONE_SHOVEL, Material.COBBLESTONE),
             MaterialPair("Stone", Material.STONE_SHOVEL, Material.BLACKSTONE),
             MaterialPair("Iron", Material.IRON_SHOVEL, Material.IRON_INGOT),

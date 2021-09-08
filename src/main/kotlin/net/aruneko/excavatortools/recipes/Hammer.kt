@@ -8,12 +8,14 @@ import org.bukkit.plugin.Plugin
 class Hammer() {
     companion object {
         private val pickaxes = listOf(
-            MaterialPair("Wooden", Material.WOODEN_PICKAXE, Material.OAK_WOOD),
-            MaterialPair("Wooden", Material.WOODEN_PICKAXE, Material.ACACIA_WOOD),
-            MaterialPair("Wooden", Material.WOODEN_PICKAXE, Material.BIRCH_WOOD),
-            MaterialPair("Wooden", Material.WOODEN_PICKAXE, Material.DARK_OAK_WOOD),
-            MaterialPair("Wooden", Material.WOODEN_PICKAXE, Material.JUNGLE_WOOD),
-            MaterialPair("Wooden", Material.WOODEN_PICKAXE, Material.SPRUCE_WOOD),
+            MaterialPair("Wooden", Material.WOODEN_PICKAXE, Material.OAK_PLANKS),
+            MaterialPair("Wooden", Material.WOODEN_PICKAXE, Material.ACACIA_PLANKS),
+            MaterialPair("Wooden", Material.WOODEN_PICKAXE, Material.BIRCH_PLANKS),
+            MaterialPair("Wooden", Material.WOODEN_PICKAXE, Material.DARK_OAK_PLANKS),
+            MaterialPair("Wooden", Material.WOODEN_PICKAXE, Material.JUNGLE_PLANKS),
+            MaterialPair("Wooden", Material.WOODEN_PICKAXE, Material.SPRUCE_PLANKS),
+            MaterialPair("Wooden", Material.WOODEN_PICKAXE, Material.CRIMSON_PLANKS),
+            MaterialPair("Wooden", Material.WOODEN_PICKAXE, Material.WARPED_PLANKS),
             MaterialPair("Stone", Material.STONE_PICKAXE, Material.COBBLESTONE),
             MaterialPair("Stone", Material.STONE_PICKAXE, Material.BLACKSTONE),
             MaterialPair("Iron", Material.IRON_PICKAXE, Material.IRON_INGOT),
