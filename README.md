@@ -3,9 +3,9 @@
 いわゆる 3x3 の範囲破壊が出来るツールを追加する Spigot 用のプラグインです。
 
 ## (動作|作成)環境
-- Spigot 1.16.5
-- Java 1.8
-- Kotlin 1.4.30
+- Spigot 1.17.1
+- Java 16
+- Kotlin 1.5.30
 
 ## How to build
 以下のコマンドを入力すると、build/libs/以下にjarファイルができあがります。
