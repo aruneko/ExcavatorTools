@@ -52,7 +52,9 @@ class MiningFaceListener : Listener {
     @EventHandler(priority = EventPriority.MONITOR)
     fun onBreak(event: BlockBreakEvent) {
         // Also discard records for cancelled breaks, sneaking, and ordinary tools.
-        faces.remove(event.player.uniqueId)
+        // An extra break from a queued task must not erase a newer click on another block.
+        val playerId = event.player.uniqueId
+        if (faces[playerId]?.target == Target.of(event.block)) faces.remove(playerId)
     }
 
     @EventHandler

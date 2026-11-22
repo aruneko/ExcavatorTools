@@ -13,6 +13,8 @@ import org.bukkit.block.Block
 import org.bukkit.block.BlockFace
 import org.bukkit.entity.Player
 import org.bukkit.event.block.Action
+import org.bukkit.event.block.BlockDropItemEvent
+import org.bukkit.block.BlockState
 import org.bukkit.event.block.BlockBreakEvent
 import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.inventory.EquipmentSlot
@@ -37,6 +39,11 @@ class MiningListenerTest {
     private var held: ItemStack = TestTool()
     private var centerType = Material.STONE
     private var breaks = 0
+    private val extraEvents = mutableListOf<BlockBreakEvent>()
+    private var beforeExtraBreak: (BlockBreakEvent) -> Unit = {}
+    private var breakToolAfter: Int? = null
+    private var throwOnBreak = false
+    private var seedClickBeforeExtra = false
     private val playerId = UUID.randomUUID()
     private val world = stub<World> { name, _ ->
         when (name) {
@@ -51,8 +58,9 @@ class MiningListenerTest {
             else -> error("Unexpected PlayerInventory.$name")
         }
     }
-    private val player = stub<Player> { name, _ ->
+    private val player = stub<Player> { name, args ->
         when (name) {
+            "breakBlock" -> breakAsPlayer(args[0] as Block)
             "getUniqueId" -> playerId
             "getInventory" -> inventory
             "getWorld" -> world
@@ -83,9 +91,28 @@ class MiningListenerTest {
             "getZ" -> z
             "getType" -> if (central) centerType else Material.STONE
             "getRelative" -> block(x + args[0] as Int, y + args[1] as Int, z + args[2] as Int, false)
-            "breakNaturally" -> { breaks++; true }
             else -> error("Unexpected Block.$name")
         }
+    }
+
+    private fun breakAsPlayer(block: Block): Boolean {
+        if (throwOnBreak) throw IllegalStateException("simulated failure")
+        if (seedClickBeforeExtra) {
+            faces.onInteract(PlayerInteractEvent(player, Action.LEFT_CLICK_BLOCK, null, block, BlockFace.NORTH, EquipmentSlot.HAND))
+        }
+        val event = BlockBreakEvent(block, player).apply { expToDrop = 5 }
+        extraEvents.add(event)
+        listener.onBlockBreak(event)
+        beforeExtraBreak(event)
+        listener.onExtraBlockBreak(event)
+        faces.onBreak(event)
+        if (event.isCancelled) return false
+        breaks++
+        if (gameMode == GameMode.SURVIVAL) {
+            held = if (breaks == breakToolAfter) TestTool(Material.AIR)
+            else TestTool(damage = (held.itemMeta as Damageable).damage + 1)
+        }
+        return true
     }
 
     private fun begin(): BlockBreakEvent {
@@ -178,6 +205,105 @@ class MiningListenerTest {
         assertFalse(snapshot.matches(TestTool(Material.AIR)))
         assertEquals(10, (original.itemMeta as Damageable).damage)
         assertEquals(11, (current.itemMeta as Damageable).damage)
+    }
+
+    @Test
+    fun `each neighbor gets its own cancellable break and cancelled blocks are skipped`() {
+        begin()
+        beforeExtraBreak = { if (it.block.x == -1 && it.block.y == 63) it.isCancelled = true }
+        finish()
+        assertEquals(8, extraEvents.size)
+        assertEquals(7, breaks)
+        assertEquals(7, (held.itemMeta as Damageable).damage)
+        assertTrue(extraEvents.all { it.expToDrop == 5 })
+    }
+
+    @Test
+    fun `extra break events never queue another area mine even with a recorded face`() {
+        begin()
+        seedClickBeforeExtra = true
+        finish()
+        assertEquals(8, breaks)
+        assertEquals(1, queued.size)
+    }
+
+    @Test
+    fun `tool breaking partway through mining stops remaining neighbors`() {
+        begin()
+        breakToolAfter = 2
+        finish()
+        assertEquals(2, extraEvents.size)
+        assertEquals(2, breaks)
+    }
+
+    @Test
+    fun `changing held slot during an extra break stops remaining neighbors`() {
+        begin()
+        beforeExtraBreak = { slot = 1 }
+        finish()
+        assertEquals(1, breaks)
+    }
+
+    @Test
+    fun `original drop suppression is inherited without overriding per block experience`() {
+        val original = begin()
+        original.isDropItems = false
+        finish()
+        assertEquals(8, breaks)
+        assertTrue(extraEvents.all { !it.isDropItems })
+        assertTrue(extraEvents.all { it.expToDrop == 5 })
+    }
+
+    @Test
+    fun `per block drop suppression is preserved when original drops are allowed`() {
+        begin()
+        beforeExtraBreak = { it.isDropItems = false }
+        finish()
+        assertTrue(extraEvents.all { !it.isDropItems })
+    }
+
+    @Test
+    fun `drop event fallback suppresses reenabled drops only for the active target`() {
+        begin().isDropItems = false
+        var checked = 0
+        beforeExtraBreak = { event ->
+            val state = stub<BlockState> { name, _ -> error("Unexpected BlockState.$name") }
+            val drop = BlockDropItemEvent(event.block, state, player, mutableListOf())
+            listener.onExtraBlockDrop(drop)
+            assertTrue(drop.isCancelled)
+            val unrelated = BlockDropItemEvent(center, state, player, mutableListOf())
+            listener.onExtraBlockDrop(unrelated)
+            assertFalse(unrelated.isCancelled)
+            checked++
+        }
+        finish()
+        assertEquals(8, checked)
+        val state = stub<BlockState> { name, _ -> error("Unexpected BlockState.$name") }
+        val laterDrop = BlockDropItemEvent(center, state, player, mutableListOf())
+        listener.onExtraBlockDrop(laterDrop)
+        assertFalse(laterDrop.isCancelled)
+    }
+
+    @Test
+    fun `exception during extra break releases the recursion guard`() {
+        begin()
+        throwOnBreak = true
+        assertFailsWith<IllegalStateException> { finish() }
+        throwOnBreak = false
+        queued.clear()
+        centerType = Material.STONE
+        begin()
+        finish()
+        assertEquals(8, breaks)
+    }
+
+    @Test
+    fun `creative mode uses player break API without modifying tools itself`() {
+        gameMode = GameMode.CREATIVE
+        begin()
+        finish()
+        assertEquals(8, extraEvents.size)
+        assertEquals(0, (held.itemMeta as Damageable).damage)
     }
 
     private class TestTool(

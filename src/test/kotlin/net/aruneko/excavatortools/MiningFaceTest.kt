@@ -128,6 +128,14 @@ class MiningFaceTest {
         assertNull(listener.consumeFace(playerId, block()))
     }
 
+    @Test
+    fun `extra break on another block does not erase the next clicked face`() {
+        val listener = MiningFaceListener()
+        click(listener, block(x = 11), BlockFace.UP)
+        listener.onBreak(BlockBreakEvent(block(), player))
+        assertEquals(BlockFace.UP, listener.consumeFace(playerId, block(x = 11)))
+    }
+
     private inline fun <reified T> stub(crossinline call: (String, Array<out Any?>) -> Any?): T =
         Proxy.newProxyInstance(T::class.java.classLoader, arrayOf(T::class.java)) { _, method, args ->
             call(method.name, args ?: emptyArray())
