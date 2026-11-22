@@ -1,14 +1,17 @@
 package net.aruneko.excavatortools.tools
 
-import net.aruneko.excavatortools.recipes.Excavator.Companion.isExcavator
-import net.aruneko.excavatortools.recipes.Hammer.Companion.isHammer
 import org.bukkit.Material
 import org.bukkit.Tag
-import org.bukkit.inventory.ItemStack
 
-enum class ToolType {
-    HAMMER,
-    EXCAVATOR;
+enum class ToolType(val id: String, val displayName: String) {
+    HAMMER("hammer", "Hammer"),
+    EXCAVATOR("excavator", "Excavator");
+
+    val itemTag: Tag<Material>
+        get() = when (this) {
+            HAMMER -> Tag.ITEMS_PICKAXES
+            EXCAVATOR -> Tag.ITEMS_SHOVELS
+        }
 
     val mineableTag: Tag<Material>
         get() = when (this) {
@@ -16,12 +19,7 @@ enum class ToolType {
             EXCAVATOR -> Tag.MINEABLE_SHOVEL
         }
 
-    private fun matches(item: ItemStack): Boolean = when (this) {
-        HAMMER -> item.isHammer()
-        EXCAVATOR -> item.isExcavator()
-    }
-
     companion object {
-        fun from(item: ItemStack): ToolType? = entries.firstOrNull { it.matches(item) }
+        fun fromId(id: String): ToolType? = entries.firstOrNull { it.id == id }
     }
 }
