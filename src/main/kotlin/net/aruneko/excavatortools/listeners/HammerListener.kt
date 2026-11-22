@@ -2,15 +2,13 @@ package net.aruneko.excavatortools.listeners
 
 import net.aruneko.excavatortools.extensions.surroundingBlocks
 import net.aruneko.excavatortools.recipes.Hammer.Companion.isHammer
-import org.bukkit.Server
 import org.bukkit.Tag.MINEABLE_PICKAXE
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.block.BlockBreakEvent
-import org.bukkit.plugin.Plugin
 
-class HammerListener(private val plugin: Plugin, private val server: Server): Listener {
-    @EventHandler
+class HammerListener(private val miningFaces: MiningFaceListener): Listener {
+    @EventHandler(ignoreCancelled = true)
     fun onUseHammer(event: BlockBreakEvent) {
         val player = event.player
         val mainHandItem = player.inventory.itemInMainHand
@@ -23,7 +21,9 @@ class HammerListener(private val plugin: Plugin, private val server: Server): Li
             return
         }
 
-        event.block.surroundingBlocks(player).filter {
+        val face = miningFaces.consumeFace(player.uniqueId, event.block) ?: return
+
+        event.block.surroundingBlocks(face).filter {
             MINEABLE_PICKAXE.isTagged(it.type)
         }.forEach {
             it.breakNaturally(mainHandItem)

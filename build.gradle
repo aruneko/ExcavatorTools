@@ -15,6 +15,13 @@ repositories {
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib:${kotlin_version}"
     compileOnly "org.spigotmc:spigot-api:${mc_version}-R0.1-SNAPSHOT"
+    testImplementation "org.spigotmc:spigot-api:${mc_version}-R0.1-SNAPSHOT"
+    testImplementation "org.jetbrains.kotlin:kotlin-test-junit5:${kotlin_version}"
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+test {
+    useJUnitPlatform()
 }
 
 kotlin {
