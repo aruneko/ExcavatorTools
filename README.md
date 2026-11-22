@@ -3,16 +3,21 @@
 いわゆる 3x3 の範囲破壊が出来るツールを追加する Spigot 用のプラグインです。
 
 ## (動作|作成)環境
-- Spigot 1.18
-- Java 17
-- Kotlin 1.6.0
+- Spigot 26.3
+- Java 25 (JDK / サーバー実行環境)
+- Kotlin 2.4.21
+- Gradle 9.7.0 (Wrapper 同梱)
 
 ## How to build
 以下のコマンドを入力すると、build/libs/以下にjarファイルができあがります。
 
 ```bash
-$ ./gradlew jar
+$ ./gradlew clean build --warning-mode all
 ```
+
+ビルドには JDK 25 を使用します。生成される JAR は Kotlin 標準ライブラリを同梱しているため、そのまま Spigot 26.3 の `plugins/` に配置できます。
+
+push / pull request でビルドを検証し、`*.*.*` 形式のタグを push すると GitHub Release に JAR を添付します。
 
 ## 使い方
 
