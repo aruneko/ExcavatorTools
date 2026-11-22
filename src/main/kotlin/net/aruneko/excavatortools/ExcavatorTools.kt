@@ -13,7 +13,10 @@ class ExcavatorTools : JavaPlugin() {
     override fun onEnable() {
         val toolIdentity = ToolIdentity(NamespacedKey(this, "tool_type"))
         server.pluginManager.registerEvents(miningFaces, this)
-        server.pluginManager.registerEvents(MiningListener(miningFaces, toolIdentity), this)
+        val mining = MiningListener(miningFaces, toolIdentity, runNextTick = { task ->
+            server.scheduler.runTask(this, task)
+        })
+        server.pluginManager.registerEvents(mining, this)
         ToolRecipes.register(this, server, toolIdentity)
     }
 
