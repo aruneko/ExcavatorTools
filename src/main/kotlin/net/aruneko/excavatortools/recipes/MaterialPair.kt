@@ -18,7 +18,7 @@ fun List<MaterialPair>.addRecipes(itemName: String, plugin: Plugin, server: Serv
         val item = ItemStack(it.tool)
         val meta = item.itemMeta
         meta?.setDisplayName("${ChatColor.GREEN}${it.materialName} $itemName")
-        meta?.addEnchant(Enchantment.DURABILITY, 1, true)
+        meta?.addEnchant(Enchantment.UNBREAKING, 1, true)
         meta?.addItemFlags(ItemFlag.HIDE_ENCHANTS)
         meta?.lore = listOf("${itemName.uppercase(Locale.getDefault())}!")
         item.itemMeta = meta
